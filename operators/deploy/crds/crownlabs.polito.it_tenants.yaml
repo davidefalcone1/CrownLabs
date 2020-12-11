@@ -75,12 +75,12 @@ spec:
                       - Admin
                       - Basic
                       type: string
-                    workspaceURL:
+                    workspaceName:
                       type: string
                   required:
                   - groupNumber
                   - role
-                  - workspaceURL
+                  - workspaceName
                   type: object
                 type: array
             required:

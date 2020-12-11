@@ -37,6 +37,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: tenant-operator
+    namespace: ""
 
 ---
 apiVersion: apps/v1
@@ -59,7 +60,7 @@ spec:
     spec:
       serviceAccountName: tenant-operator
       containers:
-      - image: crownlabs/tenant-operator${IMAGE_SUFFIX}:${IMAGE_TAG}
+      - image: crownlabs-tenant-operator${IMAGE_SUFFIX}:${IMAGE_TAG}
         imagePullPolicy: Always
         name: tenant-operator
         command: ["/usr/bin/controller"]

@@ -36,9 +36,9 @@ const (
 
 // UserWorkspaceData contains the info of the workspaces related to a user
 type UserWorkspaceData struct {
-	WorkspaceURL string            `json:"workspaceURL"`
-	GroupNumber  int               `json:"groupNumber"`
-	Role         WorkspaceUserRole `json:"role"`
+	Name        string            `json:"workspaceName"`
+	GroupNumber int               `json:"groupNumber"`
+	Role        WorkspaceUserRole `json:"role"`
 }
 
 // TenantSpec defines the desired state of Tenant
@@ -46,9 +46,9 @@ type TenantSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	Name string `json:"name"`
+	FirstName string `json:"name"`
 
-	Surname string `json:"surname"`
+	LastName string `json:"surname"`
 
 	ID string `json:"ID"`
 

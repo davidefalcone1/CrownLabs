@@ -91,6 +91,7 @@ func main() {
 	if err = (&controllers.TenantReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
+		KcA:    kcA,
 	}).SetupWithManager(mgr); err != nil {
 		klog.Fatal("Unable to create controller for Tenant", err)
 	}
@@ -134,7 +135,6 @@ func newKcActor(kcURL, kcUser, kcPsw, targetRealmName, targetClient, loginRealm 
 
 // checkAndRenewTokenPeriodically checks every intervalCheck if the token is about in less than expireLimit or is already expired, if so it renews it
 func checkAndRenewTokenPeriodically(ctx context.Context, kcClient gocloak.GoCloak, token *gocloak.JWT, kcAdminUser string, kcAdminPsw string, loginRealm string, intervalCheck time.Duration, expireLimit time.Duration) {
-
 	kcRenewTokenTicker := time.NewTicker(intervalCheck)
 	for {
 		// wait intervalCheck
