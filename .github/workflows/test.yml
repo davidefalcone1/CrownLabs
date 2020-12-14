@@ -42,6 +42,11 @@ jobs:
           make test
           make test-python
 
+      - name: Send coverage
+        uses: shogo82148/actions-goveralls@v1
+        with:
+          path-to-profile: coverage.out
+          working-directory: operators/
 
   operators-generated:
     name: Operators (Generated manifests)
