@@ -17,11 +17,11 @@ spec:
   scope: Cluster
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .spec.name
-      name: Name
+    - jsonPath: .spec.firstName
+      name: FirstName
       type: string
-    - jsonPath: .spec.surname
-      name: Surname
+    - jsonPath: .spec.lastName
+      name: LastName
       type: string
     - jsonPath: .spec.email
       name: Email
@@ -53,15 +53,15 @@ spec:
               email:
                 pattern: ^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$
                 type: string
-              name:
+              firstName:
+                type: string
+              lastName:
                 type: string
               publicKeys:
                 description: public keys of user
                 items:
                   type: string
                 type: array
-              surname:
-                type: string
               workspaces:
                 description: list of workspaces the user is in
                 items:
@@ -86,8 +86,8 @@ spec:
             required:
             - ID
             - email
-            - name
-            - surname
+            - firstName
+            - lastName
             type: object
           status:
             description: TenantStatus defines the observed state of Tenant

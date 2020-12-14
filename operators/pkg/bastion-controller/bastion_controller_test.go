@@ -64,8 +64,8 @@ var _ = Describe("Bastion controller", func() {
 					Namespace: NamespaceTenant1,
 				},
 				Spec: crownlabsalpha1.TenantSpec{
-					Name:          FirstNameTenant1,
-					Surname:       LastNameTenant1,
+					FirstName:     FirstNameTenant1,
+					LastName:      LastNameTenant1,
 					ID:            IDTenant1,
 					Email:         EmailTenant1,
 					Workspaces:    WorkspacesTenants,
@@ -140,8 +140,8 @@ var _ = Describe("Bastion controller", func() {
 					Namespace: NamespaceTenant2,
 				},
 				Spec: crownlabsalpha1.TenantSpec{
-					Name:          FirstNameTenant2,
-					Surname:       LastNameTenant2,
+					FirstName:     FirstNameTenant2,
+					LastName:      LastNameTenant2,
 					ID:            IDTenant2,
 					Email:         EmailTenant2,
 					Workspaces:    WorkspacesTenants,

@@ -46,9 +46,9 @@ type TenantSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	Name string `json:"name"`
+	FirstName string `json:"firstName"`
 
-	Surname string `json:"surname"`
+	LastName string `json:"lastName"`
 
 	ID string `json:"ID"`
 
@@ -80,8 +80,8 @@ type TenantStatus struct {
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope="Cluster"
-// +kubebuilder:printcolumn:name="Name",type=string,JSONPath=`.spec.name`
-// +kubebuilder:printcolumn:name="Surname",type=string,JSONPath=`.spec.surname`
+// +kubebuilder:printcolumn:name="FirstName",type=string,JSONPath=`.spec.firstName`
+// +kubebuilder:printcolumn:name="LastName",type=string,JSONPath=`.spec.lastName`
 // +kubebuilder:printcolumn:name="Email",type=string,JSONPath=`.spec.email`
 // +kubebuilder:printcolumn:name="ID",type=string,JSONPath=`.spec.ID`
 

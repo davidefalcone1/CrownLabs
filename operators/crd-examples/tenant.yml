@@ -3,8 +3,8 @@ kind: Tenant
 metadata:
   name: mariorossi
 spec:
-  name: mario
-  surname: rossi
+  firstName: mario
+  lastName: rossi
   ID: id12345678
   email: mario.rossi@email.com
   workspaces:
