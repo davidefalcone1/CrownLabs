@@ -26,9 +26,11 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/klog"
 )
 
 var _ = Describe("Workspace controller", func() {
+	klog.Info("WORKSPACE")
 
 	// Define utility constants for object names and testing timeouts/durations and intervals.
 	const (
@@ -45,43 +47,49 @@ var _ = Describe("Workspace controller", func() {
 	)
 
 	mockCtrl := gomock.NewController(GinkgoT())
-	defer mockCtrl.Finish()
-	mKcClient = mocks.NewMockGoCloak(mockCtrl)
-	kcA.Client = mKcClient
-	userKcRole := fmt.Sprintf("workspace-%s:user", wsName)
-	adminKcRole := fmt.Sprintf("workspace-%s:admin", wsName)
+	BeforeEach(
+		func() {
+			mKcClient = nil
+			mKcClient = mocks.NewMockGoCloak(mockCtrl)
+			kcA.Client = mKcClient
+			klog.Info(&mKcClient)
+			klog.Info(kcA.Client)
+			userKcRole := fmt.Sprintf("workspace-%s:user", wsName)
+			adminKcRole := fmt.Sprintf("workspace-%s:admin", wsName)
 
-	mKcClient.EXPECT().GetClientRole(
-		gomock.AssignableToTypeOf(context.Background()),
-		gomock.Eq(kcAccessToken),
-		gomock.Eq(kcTargetRealm),
-		gomock.Eq(kcTargetClientID),
-		gomock.Eq(userKcRole),
-	).Return(&gocloak.Role{Name: &userKcRole}, nil).MinTimes(1).MaxTimes(2)
+			mKcClient.EXPECT().GetClientRole(
+				gomock.AssignableToTypeOf(context.Background()),
+				gomock.Eq(kcAccessToken),
+				gomock.Eq(kcTargetRealm),
+				gomock.Eq(kcTargetClientID),
+				gomock.Eq(userKcRole),
+			).Return(&gocloak.Role{Name: &userKcRole}, nil).MinTimes(1).MaxTimes(2)
 
-	mKcClient.EXPECT().GetClientRole(
-		gomock.AssignableToTypeOf(context.Background()),
-		gomock.Eq(kcAccessToken),
-		gomock.Eq(kcTargetRealm),
-		gomock.Eq(kcTargetClientID),
-		gomock.Eq(adminKcRole),
-	).Return(&gocloak.Role{Name: &adminKcRole}, nil).MinTimes(1).MaxTimes(2)
+			mKcClient.EXPECT().GetClientRole(
+				gomock.AssignableToTypeOf(context.Background()),
+				gomock.Eq(kcAccessToken),
+				gomock.Eq(kcTargetRealm),
+				gomock.Eq(kcTargetClientID),
+				gomock.Eq(adminKcRole),
+			).Return(&gocloak.Role{Name: &adminKcRole}, nil).MinTimes(1).MaxTimes(2)
 
-	mKcClient.EXPECT().DeleteClientRole(gomock.AssignableToTypeOf(context.Background()),
-		gomock.Eq(kcAccessToken),
-		gomock.Eq(kcTargetRealm),
-		gomock.Eq(kcTargetClientID),
-		gomock.Eq(userKcRole),
-	).Return(nil).MinTimes(1).MaxTimes(2)
+			mKcClient.EXPECT().DeleteClientRole(gomock.AssignableToTypeOf(context.Background()),
+				gomock.Eq(kcAccessToken),
+				gomock.Eq(kcTargetRealm),
+				gomock.Eq(kcTargetClientID),
+				gomock.Eq(userKcRole),
+			).Return(nil).MinTimes(1).MaxTimes(2)
 
-	mKcClient.EXPECT().DeleteClientRole(gomock.AssignableToTypeOf(context.Background()),
-		gomock.Eq(kcAccessToken),
-		gomock.Eq(kcTargetRealm),
-		gomock.Eq(kcTargetClientID),
-		gomock.Eq(adminKcRole),
-	).Return(nil).MinTimes(1).MaxTimes(2)
+			mKcClient.EXPECT().DeleteClientRole(gomock.AssignableToTypeOf(context.Background()),
+				gomock.Eq(kcAccessToken),
+				gomock.Eq(kcTargetRealm),
+				gomock.Eq(kcTargetClientID),
+				gomock.Eq(adminKcRole),
+			).Return(nil).MinTimes(1).MaxTimes(2)
+		})
 
 	It("Should create the related resources when creating a workspace", func() {
+		klog.Info("WORKSPACE IT")
 		By("By creating a workspace")
 		ctx := context.Background()
 		ws := &crownlabsv1alpha1.Workspace{
@@ -148,8 +156,7 @@ var _ = Describe("Workspace controller", func() {
 		}, timeout, interval).Should(BeTrue())
 		By("By checking that the keycloak deleteRole methods get called when a workspace is deleted")
 
-		err := k8sClient.Delete(context.Background(), ws)
-		Expect(err).ToNot(HaveOccurred())
-
 	})
+	klog.Info("WORKSPACE OUT")
+
 })
