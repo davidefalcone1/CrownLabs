@@ -33,6 +33,7 @@ import (
 type TenantReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
+	KcA    *KcActor
 }
 
 // +kubebuilder:rbac:groups=crownlabs.polito.it,resources=tenants,verbs=get;list;watch;create;update;patch;delete
@@ -75,7 +76,16 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		tn.Status.PersonalNamespace.Name = nsName
 	}
 
-	// everything should went ok, update status before exiting reconcile
+	_, err = createOrUpdateKcUser(ctx, r.KcA, tn.Name, tn.Spec.FirstName, tn.Spec.LastName, tn.Spec.Email)
+	if err != nil {
+		klog.Errorf("Error when creating or updating user %s", tn.Name)
+		klog.Error(err)
+		retrigErr = err
+		tn.Status.Subscriptions["keycloak"] = crownlabsv1alpha1.SubscrFailed
+	} else {
+		tn.Status.Subscriptions["keycloak"] = crownlabsv1alpha1.SubscrOk
+	}
+
 	if err := r.Status().Update(ctx, &tn); err != nil {
 		// if status update fails, still try to reconcile later
 		klog.Error("Unable to update status before exiting reconciler", err)
