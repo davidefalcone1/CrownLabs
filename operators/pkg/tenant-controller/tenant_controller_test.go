@@ -16,16 +16,23 @@ import (
 	"fmt"
 	"time"
 
+	gocloak "github.com/Nerzal/gocloak/v7"
+	"github.com/golang/mock/gomock"
 	crownlabsv1alpha1 "github.com/netgroup-polito/CrownLabs/operators/api/v1alpha1"
+	"github.com/netgroup-polito/CrownLabs/operators/pkg/tenant-controller/mocks"
 	. "github.com/onsi/ginkgo"
+
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/klog"
 )
 
 var _ = Describe("Tenant controller", func() {
+
+	klog.Info("TENANT")
 	// Define utility constants for object names and testing timeouts/durations and intervals.
 	const (
 		tnNamespace = ""
@@ -39,11 +46,34 @@ var _ = Describe("Tenant controller", func() {
 	)
 	var (
 		// make tenant name time-sensitive to make test more independent since using external resources like a real keycloak instance
-		tnName = fmt.Sprintf("test-%d", time.Now().Unix())
-		nsName = fmt.Sprintf("tenant-%s", tnName)
+		tnName     = fmt.Sprintf("test-%d", time.Now().Unix())
+		nsName     = fmt.Sprintf("tenant-%s", tnName)
+		userKcRole = "workspace-:user"
 	)
 
+	BeforeEach(func() {
+
+		mockCtrl := gomock.NewController(GinkgoT())
+		// defer mockCtrl.Finish()
+		mKcClient = nil
+		mKcClient = mocks.NewMockGoCloak(mockCtrl)
+		kcA.Client = mKcClient
+		klog.Info(&mKcClient)
+		klog.Info(kcA.Client)
+
+		// myCall :=
+		mKcClient.EXPECT().GetClientRole(
+			gomock.AssignableToTypeOf(context.Background()),
+			gomock.Eq(kcAccessToken),
+			gomock.Eq(kcTargetRealm),
+			gomock.Eq(kcTargetClientID),
+			gomock.Eq(userKcRole),
+		).Return(&gocloak.Role{Name: &userKcRole}, nil).AnyTimes()
+
+	})
+
 	It("Should create the related resources when creating a tenant", func() {
+
 		By("By creating a tenant")
 		ctx := context.Background()
 		tn := &crownlabsv1alpha1.Tenant{
@@ -97,6 +127,10 @@ var _ = Describe("Tenant controller", func() {
 			}
 			return true
 		}, timeout, interval).Should(BeTrue())
-
+		role, err := mKcClient.GetClientRole(context.Background(), kcAccessToken, kcTargetRealm, kcTargetClientID, "workspace-:user")
+		klog.Info(*role.Name)
+		klog.Info(err)
+		Expect(*role.Name).To(Equal("workspace-:user"))
 	})
+
 })

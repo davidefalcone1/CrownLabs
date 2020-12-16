@@ -75,7 +75,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		tn.Status.PersonalNamespace.Created = true
 		tn.Status.PersonalNamespace.Name = nsName
 	}
-
+	klog.Info("SHAKALAKA")
 	_, err = createOrUpdateKcUser(ctx, r.KcA, tn.Name, tn.Spec.FirstName, tn.Spec.LastName, tn.Spec.Email)
 	if err != nil {
 		klog.Errorf("Error when creating or updating user %s", tn.Name)
@@ -85,6 +85,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	} else {
 		tn.Status.Subscriptions["keycloak"] = crownlabsv1alpha1.SubscrOk
 	}
+	klog.Info("BOMBBAAA")
 
 	if err := r.Status().Update(ctx, &tn); err != nil {
 		// if status update fails, still try to reconcile later
