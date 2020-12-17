@@ -9,6 +9,7 @@ import (
 	"k8s.io/klog"
 )
 
+// KcActor contains the needed objects and infos to use keycloak functionalities
 type KcActor struct {
 	Client         gocloak.GoCloak
 	Token          *gocloak.JWT
@@ -16,9 +17,11 @@ type KcActor struct {
 	TargetClientID string
 }
 
-func createKcRoles(ctx context.Context, kcA *KcActor, rolesToCreate []string) error {
+// temp to add a new commit
+
+func (kcA *KcActor) createKcRoles(ctx context.Context, rolesToCreate []string) error {
 	for _, newRoleName := range rolesToCreate {
-		if err := createKcRole(ctx, kcA, newRoleName); err != nil {
+		if err := kcA.createKcRole(ctx, newRoleName); err != nil {
 			klog.Error("Could not create user role", newRoleName)
 			return err
 		}
@@ -26,7 +29,7 @@ func createKcRoles(ctx context.Context, kcA *KcActor, rolesToCreate []string) er
 	return nil
 }
 
-func createKcRole(ctx context.Context, kcA *KcActor, newRoleName string) error {
+func (kcA *KcActor) createKcRole(ctx context.Context, newRoleName string) error {
 	// check if keycloak role already esists
 
 	role, err := kcA.Client.GetClientRole(ctx, kcA.Token.AccessToken, kcA.TargetRealm, kcA.TargetClientID, newRoleName)
@@ -53,7 +56,7 @@ func createKcRole(ctx context.Context, kcA *KcActor, newRoleName string) error {
 	return errors.New("Something went wrong when getting a role")
 }
 
-func deleteKcRoles(ctx context.Context, kcA *KcActor, rolesToDelete []string) error {
+func (kcA *KcActor) deleteKcRoles(ctx context.Context, rolesToDelete []string) error {
 
 	for _, role := range rolesToDelete {
 		if err := kcA.Client.DeleteClientRole(ctx, kcA.Token.AccessToken, kcA.TargetRealm, kcA.TargetClientID, role); err != nil {
